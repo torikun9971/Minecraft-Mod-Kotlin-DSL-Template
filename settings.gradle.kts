@@ -19,8 +19,3 @@ pluginManagement {
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
-
-val parent = rootDir.parentFile.name
-val root = rootDir.name
-
-rootProject.name = "${parent}+${root}"
