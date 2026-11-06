@@ -1,11 +1,10 @@
 [versions]
 minecraft = "1.21.4"
-fabric = "0.18.2"
+fabric = "0.20.1"
+fabric-loom = "1.19-SNAPSHOT"
 parchment-mappings = "2025.03.23"
 
-fabric-loom = "1.15-SNAPSHOT"
-
-fabric-api = "0.118.0+1.21.4"
+fabric-api = "0.119.4+1.21.4"
 
 curseforgegradle = "1.1.28"
 minotaur = "2.+"

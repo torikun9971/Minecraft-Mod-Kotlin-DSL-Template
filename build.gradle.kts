@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.darkhax.curseforgegradle.UploadArtifact
 import org.gradle.accessors.dm.LibrariesForLibs
 
@@ -44,7 +43,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(prop("java_version"))
+        languageVersion = JavaLanguageVersion.of(25)
     }
 
     withSourcesJar()
@@ -93,6 +92,14 @@ tasks.processResources {
 
 tasks.jar {
 //    from("LICENSE")
+}
+
+tasks {
+    val javaVersion = prop("java_version").toInt()
+
+    withType<JavaCompile> {
+        options.release.set(javaVersion)
+    }
 }
 
 eclipse {
