@@ -47,7 +47,7 @@ neoForge {
 
     /**
     accessTransformers {
-    file("src/main/resources/META-INF/accesstransformer.cfg")
+        file("src/main/resources/META-INF/accesstransformer.cfg")
     }
      **/
 
