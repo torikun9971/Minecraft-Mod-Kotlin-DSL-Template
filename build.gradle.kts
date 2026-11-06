@@ -170,7 +170,7 @@ publishing {
     }
 }
 
-/**
+/*
 publishMods {
     file = modJar()
     version = "${project.version}"
@@ -180,8 +180,6 @@ publishMods {
     modLoaders.add("neoforge")
     type = STABLE
 
-    additionalFiles.from(sourcesJar())
-
     github {
         accessToken = System.getenv("GITHUB_TOKEN")
 
@@ -190,6 +188,8 @@ publishMods {
 
         tagName = "v" + project.version
         displayName = tagName
+
+        additionalFiles.from(sourcesJar())
     }
 
     curseforge {
@@ -205,6 +205,8 @@ publishMods {
 
         client = true
         server = true
+
+        additionalFiles.from(sourcesJar())
     }
 
     modrinth {
@@ -217,9 +219,13 @@ publishMods {
         minecraftVersions.add("1.21.1")
 
         environment = CLIENT_AND_SERVER
+
+        additionalFile(sourcesJar()) {
+            type = SOURCES_JAR
+        }
     }
 }
-**/
+*/
 
 fun prop(key: String): String {
     return properties[key].toString()

@@ -1,10 +1,10 @@
 [versions]
 minecraft = "1.21.1"
-neoforge = "21.1.235"
+neoforge = "21.1.265"
 parchment-mappings = "2024.11.17"
 
 neogradle = "2.+"
-mod-publish-plugin = "2.1.1"
+mod-publish-plugin = "2.2.1"
 
 [libraries]
 neoforge = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge" }
