@@ -9,13 +9,13 @@ plugins {
     /** mixin */
     alias(libs.plugins.mixin)
 
-    /** ide */
-    eclipse
-    idea
-
     /** publish */
     `maven-publish`
     alias(libs.plugins.mod.publish.plugin)
+
+    /** ide */
+    eclipse
+    idea
 }
 
 val mcVersion = libs.versions.minecraft.get()
