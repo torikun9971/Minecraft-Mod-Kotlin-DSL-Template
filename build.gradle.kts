@@ -1,4 +1,3 @@
-import org.gradle.accessors.dm.LibrariesForLibs
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -33,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    minecraft(libs.forge())
+    minecraft(forge())
     annotationProcessor(libs.mixin.classifier("processor"))
 
 
@@ -52,6 +51,7 @@ minecraft {
         prop("mapping_channel"),
         prop("mapping_version")
     )
+
 //    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     copyIdeResources = true
@@ -104,13 +104,15 @@ minecraft {
     }
 }
 
-/**
+/*
 mixin {
-    add(sourceSets.main.get(), "${prop("mod_id")}.refmap.json")
+    add(
+        sourceSets.main.get(), "${prop("mod_id")}.refmap.json"
+    )
 
     config("${prop("mod_id")}.mixins.json")
 }
-**/
+*/
 
 sourceSets {
     main {
@@ -120,52 +122,44 @@ sourceSets {
     }
 }
 
-tasks.named<ProcessResources>("processResources") {
-    val replaceProperties = mapOf(
-        "project_group" to project.group,
-        "project_version" to project.version,
-        "minecraft_version" to mcVersion,
-        "minecraft_version_range" to prop("minecraft_version_range"),
-        "forge_version" to libs.versions.forge.get(),
-        "forge_version_range" to prop("forge_version_range"),
-        "loader_version_range" to prop("loader_version_range"),
-        "mod_id" to prop("mod_id"),
-        "mod_name" to prop("mod_name"),
-        "mod_version" to prop("mod_version"),
-        "mod_license" to prop("mod_license"),
-//        "mod_issue" to prop("mod_issue"),
-//        "mod_update_json" to prop("mod_update_json"),
-//        "mod_homepage" to prop("mod_homepage"),
-//        "mod_credits" to prop("mod_credits"),
-        "mod_authors" to prop("mod_authors"),
-        "mod_description" to prop("mod_description")
-    )
-
-    inputs.properties(replaceProperties)
-
-    filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
-        expand(replaceProperties + mapOf("project" to project))
-    }
-}
-
-tasks.named<Jar>("jar") {
-    manifest {
-        attributes(
-            "Specification-Title" to prop("mod_name"),
-            "Specification-Vendor" to prop("mod_authors"),
-            "Specification-Version" to "1",
-            "Implementation-Title" to project.name,
-            "Implementation-Version" to project.version,
-            "Implementation-Vendor" to prop("mod_authors"),
-            "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date())
+tasks {
+    processResources {
+        val replaceProperties = mapOf(
+            "mod_group"               to project.group,
+            "mod_version"             to project.version,
+            "minecraft_version_range" to prop("minecraft_version_range"),
+            "forge_version_range"     to prop("forge_version_range"),
+            "loader_version_range"    to prop("loader_version_range"),
+            "mod_id"                  to prop("mod_id"),
+            "mod_name"                to prop("mod_name"),
         )
+
+        inputs.properties(replaceProperties)
+
+        filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
+            expand(replaceProperties + mapOf("project" to project))
+        }
     }
 
-    finalizedBy("reobfJar")
-}
+    jar {
+        manifest {
+            attributes(
+                "Specification-Title"      to prop("mod_name"),
+                "Specification-Vendor"     to prop("mod_authors"),
+                "Specification-Version"    to "1",
+                "Implementation-Title"     to project.name,
+                "Implementation-Version"   to project.version,
+                "Implementation-Vendor"    to prop("mod_authors"),
+                "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date())
+            )
+        }
 
-tasks.withType<JavaCompile>().configureEach {
-    options.encoding = "UTF-8"
+        finalizedBy("reobfJar")
+    }
+
+    withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+    }
 }
 
 eclipse {
@@ -180,7 +174,7 @@ idea {
 }
 
 val releaseTitle = "${prop("mod_name")} ${prop("mod_version")} for ${prop("mod_loader")} $mcVersion"
-val changelogFile = file("changelog.md")
+// val changelogFile = file("changelog.md")
 
 publishing {
     publications {
@@ -188,6 +182,7 @@ publishing {
             artifact(tasks.jar)
         }
     }
+
     repositories {
         maven {
             url = uri("file://${project.projectDir}/mcmodsrepo")
@@ -195,7 +190,7 @@ publishing {
     }
 }
 
-/**
+/*
 publishMods {
     file = modJar()
     version = "${project.version}"
@@ -252,25 +247,17 @@ publishMods {
         }
     }
 }
-**/
+*/
 
 fun prop(key: String): String {
     return properties[key].toString()
-}
-
-fun prop_array(key: String): Array<String> {
-    return prop_list(key).toTypedArray()
-}
-
-fun prop_list(key: String): List<String> {
-    return properties[key].toString().split(",")
 }
 
 fun extra(key: String): String {
     return extra[key].toString()
 }
 
-fun LibrariesForLibs.forge(): String {
+fun forge(): String {
     return buildString {
         append("net.minecraftforge")
         append(":")
@@ -290,10 +277,10 @@ fun canSpecifyUser(): Boolean {
     return hasProperty("mc_username") && hasProperty("mc_uuid")
 }
 
-fun modJar(): File {
-    return tasks.jar.get().outputs.files.singleFile
+fun modJar(): RegularFile {
+    return tasks.jar.get().archiveFile.get()
 }
 
-fun sourcesJar(): File {
-    return tasks.named("sourcesJar").get().outputs.files.singleFile
+fun sourcesJar(): RegularFile {
+    return tasks.named<Jar>("sourcesJar").get().archiveFile.get()
 }
