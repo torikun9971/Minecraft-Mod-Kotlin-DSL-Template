@@ -8,12 +8,12 @@ license="All Rights Reserved"
     modId="${mod_id}"
     version="${mod_version}"
     displayName="${mod_name}"
-#   displayURL=
+    #displayURL=
     authors="Me!"
-#   credits=
+    #credits=
     logoFile="assets/${mod_id}/icon.png"
     description="It's an example mod!"
-#   updateJSONURL="https://api.modrinth.com/updates/{slug|ID}/forge_updates.json"
+    #updateJSONURL="https://api.modrinth.com/updates/{slug|ID}/forge_updates.json"
 
 [[dependencies.${mod_id}]]
     modId="forge"
