@@ -1,5 +1,5 @@
 plugins {
-    /** java & neo */
+    /** lang & neoforge */
     `java-library`
     alias(libs.plugins.neogradle)
 
