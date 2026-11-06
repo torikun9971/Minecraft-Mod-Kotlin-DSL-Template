@@ -3,13 +3,13 @@ plugins {
     `java-library`
     alias(libs.plugins.neogradle)
 
-    /** ide */
-    eclipse
-    idea
-
     /** publish */
     `maven-publish`
     alias(libs.plugins.mod.publish.plugin)
+
+    /** ide */
+    eclipse
+    idea
 }
 
 val mcVersion = libs.versions.minecraft.get()
@@ -47,9 +47,9 @@ neoForge {
 
     /**
     accessTransformers {
-        file("src/main/resources/META-INF/accesstransformer.cfg")
+    file("src/main/resources/META-INF/accesstransformer.cfg")
     }
-    **/
+     **/
 
     runs {
         configureEach {
@@ -74,8 +74,8 @@ neoForge {
         create("server") {
             server()
 
-            programArgument("--nogui")
             systemProperty("neoforge.enabledGameTestNamespaces", prop("mod_id"))
+            programArgument("--nogui")
         }
 
         create("gameTestServer") {
@@ -111,40 +111,41 @@ sourceSets {
     }
 }
 
-tasks.named<Wrapper>("wrapper").configure {
-    distributionType = Wrapper.DistributionType.BIN
-}
-
-tasks.named<ProcessResources>("processResources") {
-    val replaceProperties = mapOf(
-            "project_group" to project.group,
-            "project_version" to project.version,
-            "minecraft_version" to mcVersion,
-            "minecraft_version_range" to prop("minecraft_version_range"),
-            "neoforge_version" to libs.versions.neoforge.get(),
-            "neoforge_version_range" to prop("neoforge_version_range"),
-            "loader_version_range" to prop("loader_version_range"),
-            "mod_id" to prop("mod_id"),
-            "mod_name" to prop("mod_name"),
-            "mod_version" to prop("mod_version"),
-            "mod_license" to prop("mod_license"),
-//            "mod_issue" to prop("mod_issue"),
-//            "mod_update_json" to prop("mod_update_json"),
-//            "mod_homepage" to prop("mod_homepage"),
-//            "mod_credits" to prop("mod_credits"),
-            "mod_authors" to prop("mod_authors"),
-            "mod_description" to prop("mod_description"),
-    )
-
-    inputs.properties(replaceProperties)
-
-    filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) {
-        expand(replaceProperties)
+tasks {
+    wrapper {
+        distributionType = Wrapper.DistributionType.BIN
     }
-}
 
-tasks.withType<JavaCompile>().configureEach {
-    options.encoding = "UTF-8"
+    processResources {
+        val replaceProperties = mapOf(
+            "mod_group"               to project.group,
+            "mod_version"             to project.version,
+            "minecraft_version"       to mcVersion,
+            "minecraft_version_range" to prop("minecraft_version_range"),
+            "neoforge_version"        to libs.versions.neoforge.get(),
+            "neoforge_version_range"  to prop("neoforge_version_range"),
+            "loader_version_range"    to prop("loader_version_range"),
+            "mod_id"                  to prop("mod_id"),
+            "mod_name"                to prop("mod_name"),
+            "mod_license"             to prop("mod_license"),
+//            "mod_issue"               to prop("mod_issue"),
+//            "mod_update_json"         to prop("mod_update_json"),
+//            "mod_homepage"            to prop("mod_homepage"),
+//            "mod_credits"             to prop("mod_credits"),
+            "mod_authors"             to prop("mod_authors"),
+            "mod_description"         to prop("mod_description")
+        )
+
+        inputs.properties(replaceProperties)
+
+        filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) {
+            expand(replaceProperties)
+        }
+    }
+
+    withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+    }
 }
 
 idea {
@@ -155,7 +156,7 @@ idea {
 }
 
 val releaseTitle = "${prop("mod_name")} ${prop("mod_version")} for ${prop("mod_loader")} $mcVersion"
-//val changelogFile = file("changelog.md")
+// val changelogFile = file("changelog.md")
 
 publishing {
     publications {
@@ -163,6 +164,7 @@ publishing {
             from(components["java"])
         }
     }
+
     repositories {
         maven {
             url = project.projectDir.resolve("repo").toURI()
@@ -228,23 +230,11 @@ publishMods {
 */
 
 fun prop(key: String): String {
-    return properties[key].toString()
-}
-
-fun prop_array(key: String): Array<String> {
-    return prop_list(key).toTypedArray()
-}
-
-fun prop_list(key: String): List<String> {
-    return properties[key].toString().split(",")
+    return providers.gradleProperty(key).get()
 }
 
 fun extra(key: String): String {
     return extra[key].toString()
-}
-
-fun Provider<MinimalExternalModuleDependency>.classifier(name: String): String {
-    return "${this.get()}:$name"
 }
 
 fun canSpecifyUser(): Boolean {
