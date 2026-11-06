@@ -1,14 +1,19 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.accessors.dm.LibrariesForLibs
+import net.fabricmc.loom.api.mappings.layered.spec.LayeredMappingSpecBuilder
 
 plugins {
+    /** lang & loom */
+    `java-library`
     alias(libs.plugins.fabric.loom)
-    eclipse
-    idea
 
+    /** publish */
     `maven-publish`
     alias(libs.plugins.mod.publish.plugin)
+
+    /** ide */
+    eclipse
+    idea
 }
 
 val mcVersion = libs.versions.minecraft.get()
@@ -29,13 +34,13 @@ repositories {
 
 dependencies {
     minecraft(libs.minecraft)
+
     mappings(loom.layered {
         officialMojangMappings()
-        parchment(libs.parchment_mappings())
+        parchmentMappings()
     })
 
     modImplementation(libs.fabric)
-
 //    modImplementation(libs.fabric.api)
 }
 
@@ -57,9 +62,8 @@ loom {
 
     runs {
         named("client") {
-
             if (canSpecifyUser()) {
-                programArgs(
+                programArguments.addAll(
                     "--username", prop("mc_username"),
                     "--uuid", prop("mc_uuid")
                 )
@@ -68,28 +72,29 @@ loom {
     }
 }
 
-tasks.processResources {
-    val replaceProperties = mapOf(
-        "project_group" to project.group,
-        "project_version" to project.version,
-        "java_version" to prop("java_version"),
-        "minecraft_version" to mcVersion,
-        "fabric_version" to libs.versions.fabric.asProvider().get(),
-        "fabric_api_version" to libs.versions.fabric.api.get(),
-        "mod_id" to prop("mod_id"),
-        "mod_name" to prop("mod_name"),
-        "mod_version" to prop("mod_version")
-    )
+tasks {
+    processResources {
+        val replaceProperties = mapOf(
+            "mod_group"          to project.group,
+            "mod_version"        to project.version,
+            "java_version"       to prop("java_version"),
+            "minecraft_version"  to mcVersion,
+            "fabric_version"     to libs.versions.fabric.asProvider().get(),
+            "fabric_api_version" to libs.versions.fabric.api.get(),
+            "mod_id"             to prop("mod_id"),
+            "mod_name"           to prop("mod_name"),
+        )
 
-    inputs.properties(replaceProperties)
+        inputs.properties(replaceProperties)
 
-    filesMatching(listOf("fabric.mod.json", "pack.mcmeta")) {
-        expand(replaceProperties)
+        filesMatching(listOf("fabric.mod.json", "pack.mcmeta")) {
+            expand(replaceProperties)
+        }
     }
-}
 
-tasks.jar {
+    jar {
 //    from("LICENSE")
+    }
 }
 
 tasks {
@@ -104,7 +109,7 @@ eclipse {
     synchronizationTasks("genSources")
 }
 
-tasks.getByName("ideaSyncTask")?.run {
+tasks.matching { it.name == "ideaSyncTask" }.configureEach {
     dependsOn("genSources")
 }
 
@@ -116,13 +121,7 @@ idea {
 }
 
 val releaseTitle = "${prop("mod_name")} ${prop("mod_version")} for ${prop("mod_loader")} $mcVersion"
-//val changelogFile = file("changelog.md")
-
-tasks.register("printReleaseVersion") {
-    doLast {
-        println(version)
-    }
-}
+// val changelogFile = file("changelog.md")
 
 publishing {
     publications {
@@ -194,23 +193,15 @@ publishMods {
 */
 
 fun prop(key: String): String {
-    return properties[key].toString()
-}
-
-fun prop_array(key: String): Array<String> {
-    return prop_list(key).toTypedArray()
-}
-
-fun prop_list(key: String): List<String> {
-    return properties[key].toString().split(",")
+    return providers.gradleProperty(key).get()
 }
 
 fun extra(key: String): String {
     return extra[key].toString()
 }
 
-fun LibrariesForLibs.parchment_mappings(): String {
-    return buildString {
+fun LayeredMappingSpecBuilder.parchmentMappings() {
+    val mappings = buildString {
         append("org.parchmentmc.data")
         append(":")
         append("parchment-$mcVersion")
@@ -218,10 +209,8 @@ fun LibrariesForLibs.parchment_mappings(): String {
         append(libs.versions.parchment.mappings.get())
         append("@zip")
     }
-}
 
-fun Provider<MinimalExternalModuleDependency>.classifier(name: String): String {
-    return "${this.get()}:$name"
+    parchment(mappings)
 }
 
 fun canSpecifyUser(): Boolean {

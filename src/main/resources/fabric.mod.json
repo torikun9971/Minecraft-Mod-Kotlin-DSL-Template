@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "${mod_id}",
 	"name": "${mod_name}",
-	"version": "${project_version}",
+	"version": "${mod_version}",
 	"license": "All Rights Reserved",
 	"icon": "assets/${mod_id}/icon.png",
 	"contact": {
@@ -18,7 +18,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"${project_group}.ExampleMod"
+			"${mod_group}.ExampleMod"
 		]
 	},
 	"mixins": [
