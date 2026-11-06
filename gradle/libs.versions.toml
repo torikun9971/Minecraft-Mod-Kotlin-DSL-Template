@@ -1,19 +1,32 @@
 [versions]
 minecraft = "1.20.1"
-forge = "47.4.0"
+
+# forge & mappings #
+forge = "47.4.28"
 forgegradle = "6.+"
 parchment-forgegradle = "1.+"
+
+# mixin #
 mixin = "0.8.7"
 mixin-plugin = "0.7.+"
 
-mod-publish-plugin = "2.1.1"
+# publish #
+mod-publish-plugin = "2.2.1"
 
 [libraries]
+# mixin #
 mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
 
+# dependencies #
+
+
 [plugins]
+# forge & mappings #
 forgegradle = { id = "net.minecraftforge.gradle", version.ref = "forgegradle" }
 parchment-forgegradle = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "parchment-forgegradle" }
+
+# mixin #
 mixin = { id = "org.spongepowered.mixin", version.ref = "mixin-plugin" }
 
+# publish #
 mod-publish-plugin = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mod-publish-plugin" }

@@ -204,9 +204,8 @@ publishMods {
 
     modLoaders.add("forge")
     modLoaders.add("neoforge")
-    type = STABLE
 
-    additionalFiles.from(sourcesJar())
+    type = STABLE
 
     github {
         accessToken = System.getenv("GITHUB_TOKEN")
@@ -216,6 +215,8 @@ publishMods {
 
         tagName = "v" + project.version
         displayName = tagName
+
+        additionalFiles.from(sourcesJar())
     }
 
     curseforge {
@@ -231,6 +232,8 @@ publishMods {
 
         client = true
         server = true
+
+        additionalFiles.from(sourcesJar())
     }
 
     modrinth {
@@ -243,6 +246,10 @@ publishMods {
         minecraftVersions.add("1.20.1")
 
         environment = CLIENT_AND_SERVER
+
+        additionalFile(sourcesJar()) {
+            type = SOURCES_JAR
+        }
     }
 }
 **/
