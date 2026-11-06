@@ -3,7 +3,7 @@ loaderVersion = "${loader_version_range}"
 
 license = "All Rights Reserved"
 
-#issueTrackerURL = ""
+#issueTrackerURL =
 
 [[mods]]
     modId = "${mod_id}"
