@@ -1,20 +1,19 @@
-modLoader = "javafml"
-loaderVersion = "${loader_version_range}"
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
 
-license = "All Rights Reserved"
-
-#issueTrackerURL =
+license="All Rights Reserved"
+#issueTrackerURL=
 
 [[mods]]
-    modId = "${mod_id}"
-    version = "${mod_version}"
-    displayName = "${mod_name}"
-#   displayURL =
-    authors = "Me!"
-#   credits =
-    logoFile = "assets/${mod_id}/icon.png"
-    description = "It's an example mod!"
-#   updateJSONURL = "https://api.modrinth.com/updates/{slug|ID}/forge_updates.json"
+    modId="${mod_id}"
+    version="${mod_version}"
+    displayName="${mod_name}"
+#   displayURL=
+    authors="Me!"
+#   credits=
+    logoFile="assets/${mod_id}/icon.png"
+    description="It's an example mod!"
+#   updateJSONURL="https://api.modrinth.com/updates/{slug|ID}/forge_updates.json"
 
 [[dependencies.${mod_id}]]
     modId="forge"
