@@ -120,20 +120,11 @@ tasks {
         val replaceProperties = mapOf(
             "mod_group"               to project.group,
             "mod_version"             to project.version,
-            "minecraft_version"       to mcVersion,
             "minecraft_version_range" to prop("minecraft_version_range"),
-            "neoforge_version"        to libs.versions.neoforge.get(),
             "neoforge_version_range"  to prop("neoforge_version_range"),
             "loader_version_range"    to prop("loader_version_range"),
             "mod_id"                  to prop("mod_id"),
-            "mod_name"                to prop("mod_name"),
-            "mod_license"             to prop("mod_license"),
-//            "mod_issue"               to prop("mod_issue"),
-//            "mod_update_json"         to prop("mod_update_json"),
-//            "mod_homepage"            to prop("mod_homepage"),
-//            "mod_credits"             to prop("mod_credits"),
-            "mod_authors"             to prop("mod_authors"),
-            "mod_description"         to prop("mod_description")
+            "mod_name"                to prop("mod_name")
         )
 
         inputs.properties(replaceProperties)
