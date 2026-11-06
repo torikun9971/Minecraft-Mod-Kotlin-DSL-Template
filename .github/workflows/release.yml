@@ -11,25 +11,20 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
+          fetch-depth: 0
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v6
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace
+        run: sh gradlew build --stacktrace
 
 #      - name: Checkout changelog
 #        uses: actions/checkout@v7
@@ -39,13 +34,13 @@ jobs:
 #          sparse-checkout: changelog.md
 #          sparse-checkout-cone-mode: false
 
-      - name: Upload Artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
           path: build/libs/
 
-      - name: Release Mods
-        run: ./gradlew publishMods --stacktrace
+      - name: Publish
+        run: sh gradlew publishMods --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
